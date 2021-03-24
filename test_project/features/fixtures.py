@@ -557,7 +557,7 @@ def eff_satellite(context):
     context.vault_structure_columns = {
         "EFF_SAT": {
             "src_pk": "CUSTOMER_ORDER_PK",
-            "src_dfk": "ORDER_PK",
+            "src_dfk": ["ORDER_PK"],
             "src_sfk": "CUSTOMER_PK",
             "src_start_date": "START_DATE",
             "src_end_date": "END_DATE",
@@ -1449,3 +1449,11 @@ def disable_union(context):
     Indicate that a list should not be created if multiple stages are specified in a scenario
     """
     context.disable_union = True
+
+
+@fixture
+def disable_payload(context):
+    """
+    Indicate that a src_payload key should be removed from the provided metadata
+    """
+    context.disable_payload = True
