@@ -497,8 +497,8 @@ def satellite_cycle(context):
         "STG_CUSTOMER_NO_PK_HASHDIFF": {
             "CUSTOMER_PK": "CUSTOMER_ID",
             "HASHDIFF": {"is_hashdiff": True,
-                         "columns": ["CUSTOMER_NAME", "CUSTOMER_PHONE", "CUSTOMER_DOB"]}
-        }
+                         "columns": ["CUSTOMER_NAME", "CUSTOMER_DOB"]}
+            }
     }
 
     context.derived_columns = {
