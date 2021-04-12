@@ -48,7 +48,7 @@ update_records AS (
 
 latest_records AS (
     SELECT {{ dbtvault.prefix(rank_cols, 'target', alias_target='target') }}
-        RANK() OVER (
+        ,RANK() OVER (
             PARTITION BY {{ dbtvault.prefix([src_pk], 'target') }}
             ORDER BY {{ dbtvault.prefix([src_ldts], 'target') }} DESC
         ) AS rank
