@@ -68,8 +68,7 @@ Feature: Satellites Loaded in cycles using separate manual loads
       | md5('1010') | md5('1991-03-25\|\|1010\|\|JENNY')   | Jenny         | 1991-03-25   | 2019-05-05     | 2019-05-05 | *      |
       | md5('1011') | md5('1978-06-16\|\|1011\|\|KAREN')   | Karen         | 1978-06-16   | 2019-05-07     | 2019-05-07 | *      |
       | md5('1012') | md5('1990-02-03\|\|1012\|\|ALBERT')  | Albert        | 1990-02-03   | 2019-05-04     | 2019-05-04 | *      |
-  
-  # recently added  
+
   @fixture.satellite_cycle
   Scenario: [SAT-CYCLE-NULLS] SATELLITE load over several cycles with NULL records
     Given the RAW_STAGE stage is empty
@@ -155,8 +154,6 @@ Feature: Satellites Loaded in cycles using separate manual loads
       | md5('1006') | George        | 1990-02-06   | md5('1990-02-06\|\|1006\|\|GEORGE') | 2019-01-04     | 2019-01-04 | *      |
       | md5('1007') | Harry         | 1990-02-07   | md5('1990-02-07\|\|1007\|\|HARRY')  | 2019-01-04     | 2019-01-04 | *      |
 
-  # todo: investigate issue with hashdiff miscalculation
-  # recently added  
   @fixture.satellite_cycle
   Scenario: [SAT-CYCLE-NULLS] SATELLITE load over several cycles no PK in HASHDIFF and NULL records
     Given the RAW_STAGE stage is empty
@@ -219,30 +216,29 @@ Feature: Satellites Loaded in cycles using separate manual loads
 
     # =============== CHECKS ===================
     Then the SATELLITE table should contain expected data
-      | CUSTOMER_PK | HASHDIFF                        | CUSTOMER_NAME | CUSTOMER_DOB | EFFECTIVE_FROM | LOAD_DATE  | SOURCE |
-      | md5('1001') | md5('ALBERT\|\|1990-02-01')     | Albert        | 1990-02-01   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1002') | md5('BEN\|\|1990-02-02')        | Ben           | 1990-02-02   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1003') | md5('CHAD\|\|1990-02-03')       | Chad          | 1990-02-03   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1004') | md5('DOM\|\|1990-02-04')        | Dom           | 1990-02-04   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1005') | md5('FRIDA\|\|1990-02-05')      | Frida         | 1990-02-05   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1006') | md5('GEORGE\|\|1990-02-06')     | George        | 1990-02-06   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1007') | md5('HARRY\|\|1990-02-07')      | Harry         | 1990-02-07   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1001') | md5('^^\|\|^^')                 | <null>        | <null>       | 2019-01-02     | 2019-01-02 | *      |
-      | md5('1002') | md5('^^\|\|^^')                 |               | <null>       | 2019-01-02     | 2019-01-02 | *      |
-      | md5('1003') | md5('^^\|\|1990-02-03')         | <null>        | 1990-02-03   | 2019-01-02     | 2019-01-02 | *      |
-      | md5('1004') | md5('DOM\|\|^^')                | Dom           | <null>       | 2019-01-02     | 2019-01-02 | *      |
-      | md5('1005') | md5('FRIDA\|\|1990-02-15')      | Frida         | 1990-02-15   | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1006') | md5('GEORGE\|\|^^')             | George        | <null>       | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1007') | md5('^^\|\|1990-02-07')         | <null>        | 1990-02-07   | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1001') | md5('ALBERT\|\|1990-02-01')     | Albert        | 1990-02-01   | 2019-01-04     | 2019-01-04 | *      |
-      | md5('1002') | md5('BEN\|\|1990-02-02')        | Ben           | 1990-02-02   | 2019-01-04     | 2019-01-04 | *      |
-      | md5('1003') | md5('CHAD\|\|1990-02-03')       | Chad          | 1990-02-03   | 2019-01-04     | 2019-01-04 | *      |
-      | md5('1004') | md5('DOM\|\|1990-02-04')        | Dom           | 1990-02-04   | 2019-01-04     | 2019-01-04 | *      |
-      | md5('1005') | md5('FRIDA\|\|1990-02-05 ')     | Frida         | 1990-02-05   | 2019-01-04     | 2019-01-04 | *      |
-      | md5('1006') | md5('GEORGE\|\|1990-02-06')     | George        | 1990-02-06   | 2019-01-04     | 2019-01-04 | *      |
-      | md5('1007') | md5('HARRY\|\|1990-02-07')      | Harry         | 1990-02-07   | 2019-01-04     | 2019-01-04 | *      |
+      | CUSTOMER_PK | HASHDIFF                    | CUSTOMER_NAME | CUSTOMER_DOB | EFFECTIVE_FROM | LOAD_DATE  | SOURCE |
+      | md5('1001') | md5('1990-02-01\|\|ALBERT') | Albert        | 1990-02-01   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1002') | md5('1990-02-02\|\|BEN')    | Ben           | 1990-02-02   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1003') | md5('1990-02-03\|\|CHAD')   | Chad          | 1990-02-03   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1004') | md5('1990-02-04\|\|DOM')    | Dom           | 1990-02-04   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1005') | md5('1990-02-05\|\|FRIDA')  | Frida         | 1990-02-05   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1006') | md5('1990-02-06\|\|GEORGE') | George        | 1990-02-06   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1007') | md5('1990-02-07\|\|HARRY')  | Harry         | 1990-02-07   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1001') | md5('^^\|\|^^')             | <null>        | <null>       | 2019-01-02     | 2019-01-02 | *      |
+      | md5('1002') | md5('^^\|\|^^')             |               | <null>       | 2019-01-02     | 2019-01-02 | *      |
+      | md5('1003') | md5('1990-02-03\|\|^^')     | <null>        | 1990-02-03   | 2019-01-02     | 2019-01-02 | *      |
+      | md5('1004') | md5('^^\|\|DOM')            | Dom           | <null>       | 2019-01-02     | 2019-01-02 | *      |
+      | md5('1005') | md5('1990-02-15\|\|FRIDA')  | Frida         | 1990-02-15   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1006') | md5('^^\|\|GEORGE')         | George        | <null>       | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1007') | md5('1990-02-07\|\|^^')     | <null>        | 1990-02-07   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1001') | md5('1990-02-01\|\|ALBERT') | Albert        | 1990-02-01   | 2019-01-04     | 2019-01-04 | *      |
+      | md5('1002') | md5('1990-02-02\|\|BEN')    | Ben           | 1990-02-02   | 2019-01-04     | 2019-01-04 | *      |
+      | md5('1003') | md5('1990-02-03\|\|CHAD')   | Chad          | 1990-02-03   | 2019-01-04     | 2019-01-04 | *      |
+      | md5('1004') | md5('1990-02-04\|\|DOM')    | Dom           | 1990-02-04   | 2019-01-04     | 2019-01-04 | *      |
+      | md5('1005') | md5('1990-02-05\|\|FRIDA')  | Frida         | 1990-02-05   | 2019-01-04     | 2019-01-04 | *      |
+      | md5('1006') | md5('1990-02-06\|\|GEORGE') | George        | 1990-02-06   | 2019-01-04     | 2019-01-04 | *      |
+      | md5('1007') | md5('1990-02-07\|\|HARRY')  | Harry         | 1990-02-07   | 2019-01-04     | 2019-01-04 | *      |
 
-  # recently added
   @fixture.satellite_cycle
   Scenario: [SAT-CYCLE-DUPLICATES] SATELLITE load over several cycles with a mix of duplicate record change cases
     Given the RAW_STAGE stage is empty
@@ -325,8 +321,6 @@ Feature: Satellites Loaded in cycles using separate manual loads
       | md5('1004') | md5('1004\|\|DOM\|\|1990-02-14')     | Dom           | 1990-02-14   | 2019-01-03     | 2019-01-03 | *      |
       | md5('1005') | md5('1005\|\|FREYA\|\|1990-02-15')   | Freya         | 1990-02-15   | 2019-01-03     | 2019-01-03 | *      |
 
-  # todo: investigate issue with hashdiff miscalculation
-  # recently added
   @fixture.satellite_cycle
   Scenario: [SAT-CYCLE-DUPLICATES] SATELLITE load over several cycles with no PK in HASHDIFF and a mix of duplicate record change cases
     Given the RAW_STAGE stage is empty
@@ -398,16 +392,16 @@ Feature: Satellites Loaded in cycles using separate manual loads
     # =============== CHECKS ===================
     Then the SATELLITE table should contain expected data
       | CUSTOMER_PK | HASHDIFF                     | CUSTOMER_NAME | CUSTOMER_DOB | EFFECTIVE_FROM | LOAD_DATE  | SOURCE |
-      | md5('1001') | md5('ALBERT\|\|1990-02-01')  | Albert        | 1990-02-01   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1002') | md5('BETH\|\|1990-02-02')    | Beth          | 1990-02-02   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1003') | md5('CHARLEY\|\|1990-02-03') | Charley       | 1990-02-03   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1004') | md5('DOM\|\|1990-02-04')     | Dom           | 1990-02-04   | 2019-01-01     | 2019-01-01 | *      |
-      | md5('1005') | md5('FRIDA\|\|1990-02-05')   | Frida         | 1990-02-05   | 2019-01-02     | 2019-01-02 | *      |
-      | md5('1001') | md5('ALBERT\|\|1990-02-11')  | Albert        | 1990-02-11   | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1002') | md5('BETH\|\|1990-02-12')    | Beth          | 1990-02-12   | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1003') | md5('CHARLIE\|\|1990-02-03') | Charlie       | 1990-02-03   | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1004') | md5('DOM\|\|1990-02-14')     | Dom           | 1990-02-14   | 2019-01-03     | 2019-01-03 | *      |
-      | md5('1005') | md5('FREYA\|\|1990-02-15')   | Freya         | 1990-02-15   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1001') | md5('1990-02-01\|\|ALBERT')  | Albert        | 1990-02-01   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1002') | md5('1990-02-02\|\|BETH')    | Beth          | 1990-02-02   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1003') | md5('1990-02-03\|\|CHARLEY') | Charley       | 1990-02-03   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1004') | md5('1990-02-04\|\|DOM')     | Dom           | 1990-02-04   | 2019-01-01     | 2019-01-01 | *      |
+      | md5('1005') | md5('1990-02-05\|\|FRIDA')   | Frida         | 1990-02-05   | 2019-01-02     | 2019-01-02 | *      |
+      | md5('1001') | md5('1990-02-11\|\|ALBERT')  | Albert        | 1990-02-11   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1002') | md5('1990-02-12\|\|BETH')    | Beth          | 1990-02-12   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1003') | md5('1990-02-03\|\|CHARLIE') | Charlie       | 1990-02-03   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1004') | md5('1990-02-14\|\|DOM')     | Dom           | 1990-02-14   | 2019-01-03     | 2019-01-03 | *      |
+      | md5('1005') | md5('1990-02-15\|\|FREYA')   | Freya         | 1990-02-15   | 2019-01-03     | 2019-01-03 | *      |
 
   @fixture.satellite_cycle
   @fixture.sha
