@@ -18,11 +18,16 @@
 
 {% macro default__replace_placeholder_with_period_filter(core_sql, timestamp_field, start_timestamp, stop_timestamp, offset, period) %}
 
+    {#-- if "string" or "timestamp" is in. otherwise, it is just a YYYY-MM-DD #}
+    {% if 's' in start_timestamp %}
     {%- set period_filter -%}
-            (TO_DATE({{ timestamp_field }}) >= DATE_TRUNC('{{ period }}', TO_DATE('{{ start_timestamp }}') + INTERVAL '{{ offset }} {{ period }}') AND
-             TO_DATE({{ timestamp_field }}) < DATE_TRUNC('{{ period }}', TO_DATE('{{ start_timestamp }}') + INTERVAL '{{ offset }} {{ period }}' + INTERVAL '1 {{ period }}'))
-      AND (TO_DATE({{ timestamp_field }}) >= TO_DATE('{{ start_timestamp }}'))
+            TO_DATE({{ timestamp_field }}) = TO_DATE({{ start_timestamp }}) + INTERVAL '{{ offset }} {{ period }}'
     {%- endset -%}
+    {% else %}
+    {%- set period_filter -%}
+            TO_DATE({{ timestamp_field }}) = TO_DATE('{{ start_timestamp }}') + INTERVAL '{{ offset }} {{ period }}'
+    {%- endset -%}
+    {% endif %}
 
     {%- set filtered_sql = core_sql | replace("__PERIOD_FILTER__", period_filter) -%}
 
@@ -60,10 +65,11 @@
 
 {#-- GET_PERIOD_BOUNDARIES #}
 
-{%- macro get_period_boundaries(target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
+{%- macro get_period_boundaries(target_database, target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
 
     {% set macro = adapter.dispatch('get_period_boundaries',
-                                    'dbtvault')(target_schema=target_schema,
+                                    'dbtvault')(target_database=target_database,
+                                                target_schema=target_schema,
                                                 target_table=target_table,
                                                 timestamp_field=timestamp_field,
                                                 start_date=start_date,
@@ -73,15 +79,15 @@
     {% do return(macro) %}
 {%- endmacro %}
 
-{% macro default__get_period_boundaries(target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
+{% macro default__get_period_boundaries(target_database, target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
 
     {% set period_boundary_sql -%}
         with data as (
             select
-                coalesce(max({{ timestamp_field }}), '{{ start_date }}')::timestamp as start_timestamp,
-                coalesce({{ dbt_utils.dateadd('millisecond', 86399999, "nullif('" ~ stop_date | lower ~ "','none')::timestamp") }},
+                coalesce(max({{ timestamp_field }}), {{ start_date }})::timestamp as start_timestamp,
+                coalesce({{ dbt_utils.dateadd('millisecond', 86399999, "nullif(" ~ stop_date ~ ",'none')::timestamp") }},
                          {{ dbt_utils.current_timestamp() }} ) as stop_timestamp
-            from {{ target_schema }}.{{ target_table }}
+            from {{ target_database }}.{{ target_schema }}.{{ target_table }}
         )
         select
             start_timestamp,
