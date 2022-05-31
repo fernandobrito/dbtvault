@@ -54,7 +54,8 @@
         {% set build_sql = create_table_as(False, target_relation, filtered_sql) %}
     {% else %}
 
-        {% set period_boundaries = dbtvault.get_period_boundaries(schema,
+        {% set period_boundaries = dbtvault.get_period_boundaries(target_relation.database,
+                                                                  schema,
                                                                   target_relation.name,
                                                                   timestamp_field,
                                                                   start_stop_dates.start_date,

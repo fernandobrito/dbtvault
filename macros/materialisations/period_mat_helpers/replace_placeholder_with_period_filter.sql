@@ -15,12 +15,17 @@
 
 {% macro default__replace_placeholder_with_period_filter(core_sql, timestamp_field, start_timestamp, stop_timestamp, offset, period) %}
 
+    {#-- if "string" or "timestamp" is in. otherwise, it is just a YYYY-MM-DD #}
+    {% if 's' in start_timestamp %}
     {%- set period_filter -%}
-        (TO_DATE({{ timestamp_field }})
-        >= DATE_TRUNC('{{ period }}', TO_DATE('{{ start_timestamp }}') + INTERVAL '{{ offset }} {{ period }}') AND
-             TO_DATE({{ timestamp_field }}) < DATE_TRUNC('{{ period }}', TO_DATE('{{ start_timestamp }}') + INTERVAL '{{ offset }} {{ period }}' + INTERVAL '1 {{ period }}'))
-      AND (TO_DATE({{ timestamp_field }}) >= TO_DATE('{{ start_timestamp }}'))
+            TO_DATE({{ timestamp_field }}) = TO_DATE({{ start_timestamp }}) + INTERVAL '{{ offset }} {{ period }}'
     {%- endset -%}
+    {% else %}
+    {%- set period_filter -%}
+            TO_DATE({{ timestamp_field }}) = TO_DATE('{{ start_timestamp }}') + INTERVAL '{{ offset }} {{ period }}'
+    {%- endset -%}
+    {% endif %}
+
     {%- set filtered_sql = core_sql | replace("__PERIOD_FILTER__", period_filter) -%}
 
     {% do return(filtered_sql) %}

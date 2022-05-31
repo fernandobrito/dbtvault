@@ -1,7 +1,8 @@
-{%- macro get_period_boundaries(target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
+{%- macro get_period_boundaries(target_database, target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
 
     {% set macro = adapter.dispatch('get_period_boundaries',
-                                    'dbtvault')(target_schema=target_schema,
+                                    'dbtvault')(target_database=target_database,
+                                                target_schema=target_schema,
                                                 target_table=target_table,
                                                 timestamp_field=timestamp_field,
                                                 start_date=start_date,
@@ -13,15 +14,15 @@
 
 
 
-{% macro default__get_period_boundaries(target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
+{% macro default__get_period_boundaries(target_database, target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
 
     {% set period_boundary_sql -%}
         WITH period_data AS (
             SELECT
-                COALESCE(MAX({{ timestamp_field }}), '{{ start_date }}')::TIMESTAMP AS start_timestamp,
-                COALESCE({{ dbt_utils.dateadd('millisecond', 86399999, "NULLIF('" ~ stop_date | lower ~ "','none')::TIMESTAMP") }},
+                COALESCE(MAX({{ timestamp_field }}), {{ start_date }})::TIMESTAMP AS start_timestamp,
+                COALESCE({{ dbt_utils.dateadd('millisecond', 86399999, "NULLIF(" ~ stop_date ~ ",'none')::TIMESTAMP") }},
                          {{ dbtvault.current_timestamp() }} ) AS stop_timestamp
-            FROM {{ target_schema }}.{{ target_table }}
+            FROM {{ target_database }}.{{ target_schema }}.{{ target_table }}
         )
         SELECT
             start_timestamp,
@@ -44,7 +45,7 @@
 
 
 
-{% macro bigquery__get_period_boundaries(target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
+{% macro bigquery__get_period_boundaries(target_database, target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
 
     {% set period_boundary_sql -%}
         with data as (
@@ -76,7 +77,7 @@
 
 
 
-{% macro sqlserver__get_period_boundaries(target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
+{% macro sqlserver__get_period_boundaries(target_database, target_schema, target_table, timestamp_field, start_date, stop_date, period) -%}
 
     {#  MSSQL cannot CAST datetime2 strings with more than 7 decimal places #}
     {% set start_date_mssql = start_date[0:27] %}
