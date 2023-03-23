@@ -30,8 +30,8 @@
     {% set num_periods_check_sql %}
     SELECT {{ datediff('start_timestamp', 'stop_timestamp', period) }} AS NUM_PERIODS
     FROM
-    (SELECT CAST('{{ start_date }}' AS {{ dbt.type_timestamp() }}) AS start_timestamp,
-        CAST(NULLIF('{{ stop_date | lower }}', 'none') AS {{ dbt.type_timestamp() }}) AS stop_timestamp)
+    (SELECT CAST({{ start_date }} AS {{ dbt.type_timestamp() }}) AS start_timestamp,
+        CAST(NULLIF({{ stop_date }}, 'none') AS {{ dbt.type_timestamp() }}) AS stop_timestamp)
     {% endset %}
     {% set num_periods_dict = dbtvault.get_query_results_as_dict(num_periods_check_sql) %}
     {% set num_periods = num_periods_dict['NUM_PERIODS'][0] | int %}

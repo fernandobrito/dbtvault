@@ -18,12 +18,12 @@
 
 
 {% macro default__get_period_boundaries(target_relation, timestamp_field, start_date, stop_date, period) -%}
-    {%- set from_date_or_timestamp = "NULLIF('{}','none')::TIMESTAMP".format(stop_date | lower) -%}
+    {%- set from_date_or_timestamp = "NULLIF({},'none')::TIMESTAMP".format(stop_date) -%}
 
     {% set period_boundary_sql -%}
         WITH period_data AS (
             SELECT
-                COALESCE(MAX({{ timestamp_field }}), '{{ start_date }}')::TIMESTAMP AS start_timestamp,
+                COALESCE(MAX({{ timestamp_field }}), {{ start_date }})::TIMESTAMP AS start_timestamp,
                 COALESCE({{ dbtvault.dateadd('millisecond', 86399999, from_date_or_timestamp) }},
                          {{ current_timestamp() }} ) AS stop_timestamp
             FROM {{ target_relation }}
